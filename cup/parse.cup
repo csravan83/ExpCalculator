@@ -1,0 +1,78 @@
+/* ----------------------User code--------------------*/
+package src;
+
+/* ------------Grammar symbol declarations----------- */
+
+terminal                PLUS,TIMES,EXPO,LPAREN,RPAREN;
+terminal Double        NUMBER;
+non terminal            program;
+non terminal Semantic   A,M,P,F;
+
+
+
+/* Precedences */
+//precedence left PLUS, MINUS;
+//precedence left TIMES;
+
+/* ------------Grammar rules----------- */
+
+program ::=  A : a {:
+
+    //System.out.println(" <= Token");
+
+    System.out.println("\n Evaluation result => " + a.val);
+
+    System.out.println("Equivalant Prefix Notation => " + a.pre);
+
+    System.out.println("Equivalent Postfix Notation => " + a.post);
+
+:};
+
+A    ::=  A:a PLUS M:m{:
+          Semantic s = new Semantic();
+          s.val = a.val + m.val;
+          s.pre = "+ " + a.pre + " " + m.pre;
+          s.post = a.post+" "+m.post+" +";
+  
+          RESULT = s;
+:}
+    | M:m
+    {:RESULT = m;:};
+
+M   ::=   M:m TIMES P:p{:
+          
+          Semantic s = new Semantic();
+          s.val = m.val * p.val;
+          s.pre = "* " + m.pre + " " + p.pre;
+          s.post = m.post+" "+p.post+ " *";
+  
+          RESULT = s;
+:}
+    | P:p
+    {:RESULT = p;:};
+
+P   ::=   P:p EXPO F:f{:
+          
+          Semantic s = new Semantic();
+          s.val = Math.pow(p.val,f.val);
+          s.pre = "e " + p.pre + " " + f.pre;
+          s.post = p.post+" "+f.post+" e";
+  
+          RESULT = s;
+:}
+    | F:f
+    {:RESULT = f;:};
+
+F   ::=   LPAREN A:a RPAREN
+{:
+      RESULT = a;
+:}
+      | NUMBER:num
+{:
+       Semantic s = new Semantic();
+          s.val = num;
+          s.pre = num.toString();
+          s.post= num.toString();
+         RESULT = s;
+:};
+
